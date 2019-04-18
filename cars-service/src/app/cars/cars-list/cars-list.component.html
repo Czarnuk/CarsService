@@ -1,0 +1,159 @@
+<cs-header>
+  <p levels>cars</p>
+  <div content>
+    <p>List of cars in service</p>
+  </div>
+</cs-header>
+<div class="container">
+    <div class="row">
+      <div class="col-sm-12" >
+        <table *ngIf="cars?.length > 0; else noCarsInfo" class="cs-table table table-striped">
+        <thead>
+          <tr>
+            <th>car</th>
+            <th>plate</th>
+            <th>delivery date</th>
+            <th>deadline</th>
+            <th>client</th>
+            <th>cost</th>
+            <th>action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let car of cars; let i = index" (click) = "goToCarDetails(car)" class="row-car"
+              cs-car-table-row [car]="car" (removedCar)="onRemovedCar(car)">
+          </tr>
+        </tbody>
+      </table>
+      
+      <ng-template #noCarsInfo>
+        <div class="no-cars-info">
+          <p>Currently no cars in service</p>
+        </div>
+      </ng-template>
+      </div>  
+    </div>
+  
+  <div class="row">
+    <div class="col-sm-12">
+        <button (click) = "showGross()" class="btn btn-primary btn-sm float-right">
+            SHOW GROSS
+          </button>
+    </div>
+  </div>
+  
+  <cs-total-cost #totalCostRef [totalCost] = "totalCost" (shownGross)="onShownGross($event)"></cs-total-cost>
+  
+  <div class="row" *ngIf="grossCost">
+    <div class="col-sm-12">
+      <div class="total-cost">
+        <p class="text-right">TOTAL GROSS COST: {{grossCost}} PLN</p>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+  <p class="data-header" #addCarTitle>Add a new car</p>
+
+  <div class="data-container">
+    <form [formGroup]="carForm">
+      <div class="row form-group">
+        <div class="col-sm-4">
+          <label>Model</label>
+        <input formControlName="model" type="text" class="form-control" placeholder="model">
+        <p *ngIf="!carForm.get('model').valid && carForm.get('model').dirty" class="error">This field is required!</p>
+        </div>
+        <div class="col-sm-4">
+          <label>Type</label>
+        <input formControlName="type" type="text" class="form-control" placeholder="type">
+        </div>
+        <div class="col-sm-4">
+            <label>Plate</label>
+          <input formControlName="plate" type="text" class="form-control" placeholder="plate">
+          <p *ngIf="!carForm.get('plate').valid && carForm.get('plate').dirty" class="error">This field is required and must contain 3-7 characters</p>
+          </div>
+      </div>
+
+      <div class="row form-group">
+          <div class="col-sm-4">
+            <label>Delivery date</label>
+          <input formControlName="deliveryDate" type="text" class="form-control" placeholder="deliveryDate">
+          </div>
+          <div class="col-sm-4">
+            <label>Deadline</label>
+          <input formControlName="deadline" type="text" class="form-control" placeholder="deadline">
+          </div>
+          <div class="col-sm-4">
+              <label>Is car fully damaged
+                <input formControlName="isFullyDamaged" type="checkbox" (change)="togglePlateValidity()">
+              </label>
+          </div>
+        </div>
+
+      <div class="row form-group">
+          <div class="col-sm-4">
+            <label>Color</label>
+          <input formControlName="color" type="text" class="form-control" placeholder="color">
+          </div>
+          <div class="col-sm-4">
+            <label>Power</label>
+          <input formControlName="power" type="number" class="form-control" placeholder="power" > 
+              <p *ngIf="carForm.get('power').errors?.power && carForm.get('power').dirty" class="error">
+                Power value must be between 50 PS and 800 PS.
+              </p>
+          </div>
+          <div class="col-sm-4">
+              <label>Year</label>
+            <input formControlName="year" type="text" class="form-control" placeholder="year">
+          </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-sm-4">
+              <label>Client First Name</label>
+            <input formControlName="clientFirstName" type="text" class="form-control" placeholder="client first name">
+            </div>
+            <div class="col-sm-4">
+              <label>Client Last Name</label>
+            <input formControlName="clientSurname" type="text" class="form-control" placeholder="client last name">
+            </div>
+
+        </div>
+
+         <div formArrayName="parts" *ngFor="let part of parts.controls; let i = index">
+           <div [formGroupName] = "i" class="part-group">
+             <div class="row">
+                <div class="col-12">
+                  <h5> {{i + 1 }}.) {{part.value.name}} {{part.value.price | currency:' PLN ' : true}}
+                    <span (click) = "removePart(i)" class="btn btn-danger float-right">( X )</span>
+                  </h5>
+                </div>
+             </div>
+                <div class="row form-group">
+                    <div class="col-sm-4">
+                      <label>Part name</label>
+                    <input formControlName="name" type="text" class="form-control" placeholder="part name">
+                    </div>
+                    <div class="col-sm-4">
+                        <label>Part price</label>
+                      <input formControlName="price" type="text" class="form-control" placeholder="price">
+                    </div>
+                    <div class="col-sm-4">
+                        <label>In part in stock
+                          <input formControlName="inStock" type="checkbox"  >
+                        </label>
+                    </div>
+                </div>
+           </div>
+         </div> 
+
+         <button class="btn btn-primary" (click) = "addPart()">Add part</button>
+
+            <div class="row">
+              <div class="col-sm-12">
+                <button [disabled]="carForm.invalid" (click)="addCar()" type="submit" class="btn btn-primary float-right">Add car</button>
+                <button (click)="carForm.reset()" class="btn btn-default float-right">Reset</button>
+              </div>
+            </div>
+    </form>
+  </div>

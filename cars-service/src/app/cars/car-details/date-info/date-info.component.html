@@ -1,0 +1,11 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="date-box">
+        <span>DELIVERY DATE: {{ car.deliveryDate | date:'shortDate' }}</span>
+        <span>DEADLINE: {{ car.deadline | date:'shortDate' }}</span>
+        <button (click) = "getElapsedDays()" class="btn btn-primary">Check elapsed days</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col-sm-12">
+      <div class="total-cost">
+        <p class="text-right"> 
+          <span *ngIf="isCostTooLow" class="cost-warning">
+            WARNING! COST IS LOWER THAN {{ costThreshold }}!
+          </span>
+          TOTAL COST: {{totalCost}} PLN
+        </p> 
+        <cs-income-tax></cs-income-tax>
+      </div>
+    </div>
+  </div>  
